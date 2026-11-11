@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1830" />
+    <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="description"
+      content="إدارة نقل الطلاب والأقساط والدفعات والمصاريف دون إنترنت"
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="نقل الطلاب" />
+    <link rel="stylesheet" href="style.css" />
+    <title>إدارة نقل الطلاب</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true"><img style="width: 40px; border-radius: 20px;" src="logo.jpg" alt=""></span>
+          <div>
+            <strong>إدارة نقل الطلاب</strong
+            ><small>عمل المهندسين: يـــزن الــــخــــشــــن و مــحـمــد حــاج يـوســف</small>
+          </div>
+        </div>
+        <button id="installBtn" class="btn outline" type="button" hidden>
+          تثبيت التطبيق
+        </button>
+        <button
+          id="backupBtn"
+          class="icon-btn"
+          type="button"
+          aria-label="النسخ الاحتياطي والإعدادات"
+          title="النسخ الاحتياطي"
+        >
+          🛠️
+        </button>
+      </header>
+      <main class="page-wrap">
+        <section
+          id="studentsPage"
+          class="page active"
+          aria-labelledby="studentsHeading"
+        >
+          <div class="page-heading">
+            <div>
+              <span class="eyebrow">إدارة الاشتراكات</span>
+              <h1 id="studentsHeading">الطلاب</h1>
+              <p class="muted">جميع بيانات الطلاب وأقساطهم ودفعاتهم الشهرية</p>
+            </div>
+            <div class="heading-actions">
+              <button id="importStudentsBtn" class="btn outline" type="button">
+                ⬇ استيراد من Excel</button
+              ><button id="addStudentBtn" class="btn primary" type="button">
+                ＋ إضافة طالب
+              </button>
+            </div>
+          </div>
+          <div class="stats-grid students-stats">
+            <div class="stat">
+              <span>عدد الطلاب</span><strong id="studentsCount">0</strong
+              ><small>طالب مسجل</small>
+            </div>
+            <div class="stat">
+              <span>أقساط هذا الشهر</span><strong id="expectedIncome">0</strong
+              ><small>المبلغ المستحق</small>
+            </div>
+            <div class="stat">
+              <span>المتبقي للتحصيل</span><strong id="unpaidBalance">0</strong
+              ><small>من جميع الطلاب</small>
+            </div>
+          </div>
+          <div class="panel controls">
+            <label class="field search-field"
+              ><span>البحث عن طالب</span
+              ><input
+                id="studentSearch"
+                type="search"
+                autocomplete="off"
+                enterkeyhint="search"
+                placeholder="ابحث بالاسم أو المنطقة أو الرقم..." /></label
+            ><label class="field month-field"
+              ><span>شهر العرض</span
+              ><input id="studentMonth" type="month" /></label
+            ><input
+              id="importStudentsFile"
+              type="file"
+              accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              hidden
+            /><button id="exportStudentsBtn" class="btn outline" type="button">
+              ↥ تصدير الطلاب Excel
+            </button>
+          </div>
+          <div id="studentCards" class="student-grid"></div>
+          <div id="studentsEmpty" class="empty hidden">
+            <h3>لا يوجد طلاب للعرض</h3>
+            <p>أضف طالبًا جديدًا أو غيّر البحث أو الشهر المختار.</p>
+          </div>
+        </section>
+        <section id="incomePage" class="page" aria-labelledby="incomeHeading">
+          <div class="page-heading">
+            <div>
+              <span class="eyebrow">دفتر المقبوضات</span>
+              <h1 id="incomeHeading">الواردات</h1>
+              <p class="muted">سجل تلقائي لكل دفعة يتم تحصيلها من الطلاب</p>
+            </div>
+            <div class="heading-actions">
+              <label class="btn outline file-label"
+                >↧ استيراد Excel<input
+                  id="importIncomeFile"
+                  type="file"
+                  accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  hidden /></label
+              ><button id="exportIncomeBtn" class="btn outline" type="button">
+                ↥ تصدير Excel
+              </button>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat">
+              <span id="monthlyIncomeLabel">واردات الشهر المختار</span
+              ><strong id="monthlyIncome">0</strong
+              ><small>من كافة الطلاب</small>
+            </div>
+            <div class="stat">
+              <span>الواردات الكلية</span><strong id="totalIncome">0</strong
+              ><small>من بداية التسجيل</small>
+            </div>
+            <div class="stat">
+              <span>عدد الدفعات المعروضة</span
+              ><strong id="incomePaymentsCount">0</strong
+              ><small>خلال الشهر المختار</small>
+            </div>
+          </div>
+          <div class="panel table-panel">
+            <div class="table-toolbar">
+              <h2>سجل الدفعات</h2>
+              <div class="filter-group">
+                <label class="field month-field"
+                  ><span>عرض السجلات</span
+                  ><select id="incomeScope">
+                    <option value="month">شهر معين</option>
+                    <option value="all">الكل</option>
+                  </select></label
+                ><label class="field month-field" id="incomeMonthWrap"
+                  ><span>تحديد الشهر</span><input id="incomeMonth" type="month"
+                /></label>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>اسم الطالب</th>
+                    <th>مبلغ الدفعة</th>
+                    <th>تاريخ الدفع</th>
+                    <th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="incomeRows"></tbody>
+              </table>
+            </div>
+            <div id="incomeEmpty" class="table-empty hidden">
+              لا توجد دفعات في الفترة المحددة.
+            </div>
+          </div>
+        </section>
+        <section
+          id="expensesPage"
+          class="page"
+          aria-labelledby="expensesHeading"
+        >
+          <div class="page-heading">
+            <div>
+              <span class="eyebrow">دفتر المصاريف</span>
+              <h1 id="expensesHeading">الصادرات</h1>
+              <p class="muted">المبالغ المدفوعة  مع التاريخ والملاحظات</p>
+            </div>
+            <div class="heading-actions">
+              <label class="btn outline file-label"
+                >↧ استيراد Excel<input
+                  id="importExpensesFile"
+                  type="file"
+                  accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  hidden /></label
+              ><button id="exportExpensesBtn" class="btn outline" type="button">
+                ↥ تصدير Excel</button
+              ><button id="addExpenseBtn" class="btn primary" type="button">
+                ＋ إضافة دفعة
+              </button>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat">
+              <span id="monthlyExpensesLabel">صادرات الشهر المختار</span
+              ><strong id="monthlyExpenses">0</strong
+              ><small>مدفوع </small>
+            </div>
+            <div class="stat">
+              <span>الصادرات الكلية</span><strong id="totalExpenses">0</strong
+              ><small>من بداية التسجيل</small>
+            </div>
+            <div class="stat">
+              <span id="monthlyNetLabel">صافي الشهر المختار</span
+              ><strong id="monthlyNet">0</strong
+              ><small>واردات ناقص صادرات</small>
+            </div>
+          </div>
+          <div class="panel table-panel">
+            <div class="table-toolbar">
+              <h2>سجل الصادرات</h2>
+              <div class="filter-group">
+                <label class="field month-field"
+                  ><span>عرض السجلات</span
+                  ><select id="expenseScope">
+                    <option value="month">شهر معين</option>
+                    <option value="all">الكل</option>
+                  </select></label
+                ><label class="field month-field" id="expenseMonthWrap"
+                  ><span>تحديد الشهر</span
+                  ><input id="expenseMonth" type="month"
+                /></label>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>اسم السائق</th>
+                    <th>المبلغ المدفوع</th>
+                    <th>تاريخ الدفع</th>
+                    <th>ملاحظة</th>
+                    <th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="expenseRows"></tbody>
+              </table>
+            </div>
+            <div id="expensesEmpty" class="table-empty hidden">
+              لا توجد صادرات في الفترة المحددة.
+            </div>
+          </div>
+        </section>
+      </main>
+      <nav class="bottom-nav" aria-label="التنقل بين الصفحات">
+        <button
+          type="button"
+          class="nav-item active"
+          aria-current="page"
+          data-page="studentsPage"
+        >
+          <span aria-hidden="true"></span><strong>الطلاب</strong></button
+        ><button type="button" class="nav-item" data-page="incomePage">
+          <span aria-hidden="true">↙</span><strong>الواردات</strong></button
+        ><button type="button" class="nav-item" data-page="expensesPage">
+          <span aria-hidden="true">↗</span><strong>الصادرات</strong>
+        </button>
+      </nav>
+    </div>
+    <dialog id="formDialog" aria-labelledby="dialogTitle">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow" id="dialogEyebrow">إدارة البيانات</span>
+          <h2 id="dialogTitle"></h2>
+        </div>
+        <button
+          id="closeDialog"
+          type="button"
+          class="icon-btn"
+          aria-label="إغلاق"
+        >
+          ✕
+        </button>
+      </div>
+      <form id="mainForm">
+        <div id="formFields" class="form-grid"></div>
+        <div class="dialog-actions">
+          <button type="button" id="cancelDialog" class="btn outline">
+            إلغاء</button
+          ><button type="submit" class="btn primary" id="formSubmit">
+            حفظ
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="settingsDialog" aria-labelledby="settingsTitle">
+      <div class="dialog-head">
+        <div><h2 id="settingsTitle">النسخ الاحتياطي</h2></div>
+        <button
+          id="closeSettings"
+          type="button"
+          class="icon-btn"
+          aria-label="إغلاق"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="settings-actions">
+        <button id="downloadBackup" class="btn primary" type="button">
+          ⬇ تصدير نسخة احتياطية JSON</button
+        ><label class="btn outline file-label"
+          >⬆ استيراد نسخة احتياطية<input
+            type="file"
+            id="restoreFile"
+            accept=".json,application/json"
+            hidden
+        /></label>
+      </div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
