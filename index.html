@@ -46,9 +46,133 @@
         </button>
       </header>
       <main class="page-wrap">
+        <section id="tripsPage" class="page active" aria-labelledby="tripsHeading">
+          <div id="tripListView">
+            <div class="page-heading">
+              <div>
+                <span class="eyebrow">سجل الدوام اليومي</span>
+                <h1 id="tripsHeading">الرحلات</h1>
+                <p class="muted">أنشئ رحلة بتاريخ اليوم ثم أضف إليها الطلاب الذين داوموا فيها</p>
+              </div>
+              <div class="heading-actions">
+                <button id="addTripBtn" class="btn primary" type="button">
+                  ＋ رحلة جديدة
+                </button>
+              </div>
+            </div>
+            <div class="stats-grid stats-2">
+              <div class="stat">
+                <span>عدد الرحلات</span><strong id="tripsCount">0</strong
+                ><small>خلال الشهر المختار</small>
+              </div>
+              <div class="stat">
+                <span>مجموع الركاب</span><strong id="tripsPassengers">0</strong
+                ><small>مرات ركوب في الشهر</small>
+              </div>
+            </div>
+            <div class="panel table-panel">
+              <div class="table-toolbar">
+                <h2>سجل الرحلات</h2>
+                <div class="filter-group">
+                  <label class="field month-field"
+                    ><span>الشهر</span><input id="tripMonth" type="month"
+                  /></label>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table class="fit">
+                  <thead>
+                    <tr>
+                      <th class="num">م</th>
+                      <th>اليوم</th>
+                      <th>التاريخ</th>
+                      <th>عدد الطلاب</th>
+                      <th>إجراء</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tripRows"></tbody>
+                </table>
+              </div>
+              <div id="tripsEmpty" class="table-empty hidden">
+                لا توجد رحلات في هذا الشهر. اضغط «رحلة جديدة» للبدء.
+              </div>
+            </div>
+          </div>
+          <div id="tripDetailView" class="hidden">
+            <button id="tripBackBtn" class="btn outline back-btn" type="button">
+              → كل الرحلات
+            </button>
+            <div class="panel trip-head">
+              <div>
+                <h1 id="tripDayName"></h1>
+                <p class="muted" id="tripDateText"></p>
+              </div>
+              <div class="trip-head-side">
+                <button
+                  id="tripEditBtn"
+                  class="btn outline"
+                  type="button"
+                  data-action="edit-trip"
+                >
+                  ✎ تغيير التاريخ
+                </button>
+                <button
+                  id="tripDeleteBtn"
+                  class="btn danger"
+                  type="button"
+                  data-action="delete-trip"
+                >
+                  🗑 حذف الرحلة
+                </button>
+              </div>
+            </div>
+            <div class="panel trip-add">
+              <div class="table-toolbar">
+                <h2>إضافة طالب للرحلة</h2>
+              </div>
+              <div class="trip-add-body">
+                <label class="field"
+                  ><span>البحث عن طالب</span
+                  ><input
+                    id="tripSearch"
+                    type="search"
+                    autocomplete="off"
+                    enterkeyhint="search"
+                    placeholder="ابحث بالاسم أو المنطقة..."
+                /></label>
+                <ul id="tripPickList" class="pick-list"></ul>
+                <div id="tripPickEmpty" class="table-empty hidden"></div>
+              </div>
+            </div>
+            <div class="panel table-panel">
+              <div class="table-toolbar">
+                <h2>طلاب الرحلة</h2>
+                <span class="pill paid" id="tripCountPill"></span>
+              </div>
+              <div class="table-scroll">
+                <table class="fit trip-table">
+                  <thead>
+                    <tr>
+                      <th class="num">م</th>
+                      <th>اسم الطالب</th>
+                      <th>المنطقة</th>
+                      <th>اليوم</th>
+                      <th>التاريخ</th>
+                      <th><span class="sr-only">إزالة</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tripStudentRows"></tbody>
+                </table>
+              </div>
+              <div id="tripStudentsEmpty" class="table-empty hidden">
+                لم تُضف أي طالب لهذه الرحلة بعد. اختر من القائمة أعلاه.
+              </div>
+            </div>
+          </div>
+        </section>
         <section
           id="studentsPage"
-          class="page active"
+          class="page"
           aria-labelledby="studentsHeading"
         >
           <div class="page-heading">
@@ -157,9 +281,10 @@
               </div>
             </div>
             <div class="table-scroll">
-              <table>
+              <table class="fit">
                 <thead>
                   <tr>
+                    <th class="num">م</th>
                     <th>اسم الطالب</th>
                     <th>مبلغ الدفعة</th>
                     <th>تاريخ الدفع</th>
@@ -167,6 +292,13 @@
                   </tr>
                 </thead>
                 <tbody id="incomeRows"></tbody>
+                <tfoot id="incomeFoot" class="hidden">
+                  <tr>
+                    <td colspan="2">الإجمالي</td>
+                    <td class="amount" id="incomeFootTotal">0</td>
+                    <td colspan="2"></td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
             <div id="incomeEmpty" class="table-empty hidden">
@@ -232,7 +364,7 @@
               </div>
             </div>
             <div class="table-scroll">
-              <table>
+              <table class="card-table">
                 <thead>
                   <tr>
                     <th>اسم السائق</th>
@@ -256,9 +388,11 @@
           type="button"
           class="nav-item active"
           aria-current="page"
-          data-page="studentsPage"
+          data-page="tripsPage"
         >
-          <span aria-hidden="true"></span><strong>الطلاب</strong></button
+          <span aria-hidden="true">🚌</span><strong>الرحلات</strong></button
+        ><button type="button" class="nav-item" data-page="studentsPage">
+          <span aria-hidden="true">👥</span><strong>الطلاب</strong></button
         ><button type="button" class="nav-item" data-page="incomePage">
           <span aria-hidden="true">↙</span><strong>الواردات</strong></button
         ><button type="button" class="nav-item" data-page="expensesPage">
@@ -314,6 +448,27 @@
             accept=".json,application/json"
             hidden
         /></label>
+      </div>
+    </dialog>
+    <dialog id="daysDialog" aria-labelledby="daysTitle">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow">الأيام التي داومها</span>
+          <h2 id="daysTitle"></h2>
+        </div>
+        <button
+          id="closeDays"
+          type="button"
+          class="icon-btn"
+          aria-label="إغلاق"
+        >
+          ✕
+        </button>
+      </div>
+      <p class="muted days-summary" id="daysSummary"></p>
+      <ol id="daysList" class="days-list"></ol>
+      <div id="daysEmpty" class="table-empty hidden">
+        لا توجد رحلات مسجلة لهذا الطالب في هذا الشهر.
       </div>
     </dialog>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
